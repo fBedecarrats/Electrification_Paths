@@ -1,33 +1,89 @@
-Results
+# Requirements
 
-In the Split Results file there are 2 tabs. 
+Please... recent-ish versions of
 
-Split results: Includes the least cost technology split results for each settlement, including coordinates, country code, projected population for 2030, and technology results for 10 scenarios. Low refers to current diesel price, while high to a projected diesel price according to IEA New Policies Scenario for 2030. 1 to 5 refer to World Bank's Tiers 1 to 5. 
+- PostgreSQL
+- Ruby
+- A web browser ()
 
-LCOE results: Includes the least cost levelized cost of generating electricity for each settlement, for each scenario. 
+# Installing everyhing
+
+## PostgreSQL
+
+Postgres installation varies to much depending on your OS. Here are some ideas:
+
+- [ArchLinux](https://wiki.archlinux.org/index.php/PostgreSQL)
+- [MacOSX](http://www.postgresql.org/download/macosx/)
 
 
-Reading
+## Ruby
 
-Mentis, D., Welsch, M., Fuso Nerini, F., Broad, O., Howells, M., Bazilian, M., Rogner, H., 2015 A GIS based approach for electrification planning - A case study on Nigeria - under review. Energy for Sustainable Development
+Ruby will handle the web-server and populating the database. Ruby is
+generally installed in any decent OS.
 
-Fuso Nerini, F., Broad, O., Mentis, D., Welsch, M., Bazilian, M., Howells, M., 2016. A Cost Comparison Of Technology Approaches for Improving Access to Electricity Services . Energy
+After Ruby is installed you will have access to ``rake`` and ``gem``.
 
-Mentis, D.,Howells, M.,Rogner,H.,Zepeda,E.,Korkovelos,A.,Siyal,S.,Broad,O.,Bazilian,M. submitted paper: Powering the world, The first global application of an open source spatial electrification model
+``rake`` stands for *ruby make*. It's for running tasks.
 
-Datasets
+``gem`` is a package manager. (equivalent to *npm* in node; or *env* in python).
 
--Algorithms: Detailed information about the algorithm can be found at Mentis et al.,2015.The algorithms used in this analysis will be publicly available in an upcoming version of the tool.  
 
--GIS Inputs for the scenarios can be found at the file " GIS Input". In the same file, one can also find georeferenced resource availability and costs for diesel and solar stand alone applications. Costs for mini grid and grid options are described further in Fuso Nerini et al.,2016. 
+__Bundler__ is a library that will help wrap (bundle) the Ruby dependencies
+so that within this project directory instead of modifying the system
+or setting user's configurations.
 
-Renewable Resource potentials are available upon request due to large size. Please mail Dimitris Mentis at mentis@kth.se.
+Go into the directory where this README file is located and type:
 
-Tranmission network
+    $ gem install bundler
 
-- Existing transmission network: Source: (AfDB, 2011; OSM, 2015) 
-- Planned transmission network: The transmission grid is assumed to expand to connect with planned power plants and mining sites (AfDB, 2011; OSM, 2015; USGS, 2015). 
-Sources:
-AfDB, 2011. African Development Bank [WWW Document]. URL http://www.infrastructureafrica.org/tools/maps 
-OSM, 2015. OpenStreetMap [WWW Document]. OpenStreetMap. URL https://www.openstreetmap.org/
-USGS, 2015. United States Geological Survey [WWW Document]. URL http://mrdata.usgs.gov/mineral-resources/minfac.html
+Sometimes you need to re-open your terminal for changes to take effect.
+
+Now we tell __bundler__ to read de Gemfile and install everything. You
+will see a ``vendor`` directory after doing this. All dependencies
+will be installed there.
+
+    $ bundle install
+
+
+## Populating the database
+
+Simply run (it'll try to drop the database even if it doesn't exist)
+and follow instructions... Creating 250,000 grids took about 2.5
+minutes on my computer.
+
+    $ bundle exec rake db:restore
+
+**NOTE:** To speed things up we're using a single DB transaction so if
+you interrupt it, no grids will be generated.
+
+
+## Windows?
+
+You're on your own. Good luck...
+
+
+# Usage
+
+Luckily everything is running smoothly. There are several ways that'll get
+you started. You can see rake tasks described with:
+
+    $ bundle exec rake help
+
+
+## IRB Console
+
+We'll save interesting queries in ``./db/utils.rb``. For example
+the function definitions of ``get_grid_count_by_country`` and
+``get_grids_around`` to get some examples of how querying with
+Ruby Sequel is like (which is awesome).
+
+
+## Web Server
+
+Startup the server with
+
+    $ bundle exec rake api:run
+
+Open a web browser and go to
+[http://localhost:3000/](http://localhost:3000/). You'll get
+more instructions there.
